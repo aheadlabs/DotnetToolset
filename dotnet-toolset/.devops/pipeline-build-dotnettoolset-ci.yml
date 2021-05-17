@@ -1,0 +1,26 @@
+﻿# Pipeline /.devops/pipeline-build-dotnettoolset-ci.yml
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - dev
+      - feature/*
+      - hotfix/*
+      - release/*
+pr:
+  branches:
+    include:
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+name: CI-$(date:yyyyMMdd)$(rev:.r)
+jobs:
+  - job: Main
+    displayName: Main job
+    steps:
+    - template: pipeline-template-python-setup.yml
+    - template: pipeline-template-build.yml

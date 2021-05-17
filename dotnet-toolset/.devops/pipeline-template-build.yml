@@ -1,0 +1,15 @@
+﻿steps:
+  - task: PythonScript@0
+    displayName: Get project version from .csproj
+    inputs:
+      scriptSource: inline
+      script: |
+        import devops_toolset.configure
+        devops_toolset.configure.main("azuredevops", "en")
+        devops_toolset.project_types.dotnet.utils.get_csproj_project_version($(System.DefaultWorkingDirectory)/dotnet-toolset.csproj)
+  - task: CmdLine@2
+    displayName: Build and publish NuGet package
+    inputs:
+      script: |
+        dotnet build -c Release -o .dist
+        dotnet nuget push .dist/dotnet-toolset.$(PROJECT_VERSION).nupkg --api-key $(NUGET_TOKEN) --source https://api.nuget.org/v3/index.json

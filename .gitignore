@@ -1,0 +1,8 @@
+# IDEs
+.vs/
+.vscode/
+
+# Generated files
+.dist/
+[Bb]in/
+[Oo]bj/

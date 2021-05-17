@@ -1,4 +1,4 @@
-﻿# Pipeline /.devops/pipeline-build-dotnettoolset-ci.yml
+# Pipeline /.devops/pipeline-build-dotnettoolset-ci.yml
 
 trigger:
   batch: true

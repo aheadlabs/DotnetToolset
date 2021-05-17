@@ -6,7 +6,7 @@
       script: |
         import devops_toolset.configure
         devops_toolset.configure.main("azuredevops", "en")
-        devops_toolset.project_types.dotnet.utils.get_csproj_project_version($(System.DefaultWorkingDirectory)/dotnet-toolset.csproj)
+        devops_toolset.project_types.dotnet.utils.get_csproj_project_version("$(System.DefaultWorkingDirectory)/dotnet-toolset.csproj")
   - task: CmdLine@2
     displayName: Build and publish NuGet package
     inputs:

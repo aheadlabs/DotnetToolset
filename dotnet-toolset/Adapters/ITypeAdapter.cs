@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Toolbox.Adapters
+namespace DotnetToolset.Adapters
 {
-    public interface ITypeAdapter<in TSource, out TDestination> where TSource : class where TDestination : class
+  public interface ITypeAdapter<in TSource, out TDestination> where TSource : class where TDestination : class
     {
         /// <summary>
         /// Adapts the source object to the destination object

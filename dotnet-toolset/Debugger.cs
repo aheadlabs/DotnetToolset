@@ -1,6 +1,6 @@
-﻿namespace Toolbox
+﻿namespace DotnetToolset
 {
-    public static class Debugger
+  public static class Debugger
     {
         public static void Launch()
         {

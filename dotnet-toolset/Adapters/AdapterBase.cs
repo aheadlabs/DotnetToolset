@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
 
-namespace Toolbox.Adapters
+namespace DotnetToolset.Adapters
 {
-    public abstract class AdapterBase<TSource, TDestination>
+  public abstract class AdapterBase<TSource, TDestination>
         where TSource : class
         where TDestination : class
     {

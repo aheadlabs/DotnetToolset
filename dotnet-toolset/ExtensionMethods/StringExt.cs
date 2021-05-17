@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 
-namespace Toolbox.ExtensionMethods
+namespace DotnetToolset.ExtensionMethods
 {
-    /// <summary>
-    /// Provides extension methods for String
-    /// </summary>
-    public static class StringExt
+  /// <summary>
+  /// Provides extension methods for String
+  /// </summary>
+  public static class StringExt
     {
         /// <summary>
         /// Parses only one parameter value of a literal (Useful when the literal has only one parameter to replace)

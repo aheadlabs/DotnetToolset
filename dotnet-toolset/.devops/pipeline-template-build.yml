@@ -4,6 +4,7 @@
     inputs:
       scriptSource: inline
       script: |
+        help("modules")
         import configure
         devops_toolset.configure.main("azuredevops", "en")
         devops_toolset.project_types.dotnet.utils.get_csproj_project_version("$(System.DefaultWorkingDirectory)/dotnet-toolset.csproj")

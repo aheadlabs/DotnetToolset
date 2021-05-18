@@ -8,8 +8,8 @@
     <Description>Opinionated repository that contains common .NET tools and patterns to simplify things and reuse code.</Description>
     <Copyright>Ahead Labs, S.L.</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/aheadlabs/dotnet-toolset</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/aheadlabs/dotnet-toolset</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/aheadlabs/DotnetToolset</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/aheadlabs/DotnetToolset</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>dotnet, toolset</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>

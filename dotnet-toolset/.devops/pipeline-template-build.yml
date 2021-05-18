@@ -15,4 +15,4 @@
         dotnet build -c Release -o $(System.DefaultWorkingDirectory)/.dist
         sudo apt-get install tree
         tree $(System.DefaultWorkingDirectory)
-        dotnet nuget push $(System.DefaultWorkingDirectory)/.dist/dotnet-toolset.$(PROJECT_VERSION).nupkg --api-key $(NUGET_TOKEN) --source https://api.nuget.org/v3/index.json
+        dotnet nuget push $(System.DefaultWorkingDirectory)/.dist/DotnetToolset.$(PROJECT_VERSION).nupkg --api-key $(NUGET_TOKEN) --source https://api.nuget.org/v3/index.json

@@ -1,4 +1,10 @@
 ﻿steps:
+  - task: CmdLine@2
+    displayName: Tree
+    inputs:
+      script: |
+        sudo apt-get install tree
+        tree $(System.DefaultWorkingDirectory)
   - task: PythonScript@0
     displayName: Get project version from .csproj
     inputs:

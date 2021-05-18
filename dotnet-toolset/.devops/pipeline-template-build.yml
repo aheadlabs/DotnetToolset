@@ -1,10 +1,4 @@
 ﻿steps:
-  - task: CmdLine@2
-    displayName: Tree
-    inputs:
-      script: |
-        sudo apt-get install tree
-        tree $(System.DefaultWorkingDirectory)
   - task: PythonScript@0
     displayName: Get project version from .csproj
     inputs:
@@ -13,7 +7,7 @@
         import devops_toolset.configure as configure
         import devops_toolset.project_types.dotnet.utils as utils
         configure.main("azuredevops", "en")
-        utils.get_csproj_project_version("$(System.DefaultWorkingDirectory)/dotnet-toolset/dotnet-toolset.csproj")
+        utils.get_csproj_project_version("$(System.DefaultWorkingDirectory)/dotnet-toolset/DotnetToolset.csproj")
   - task: CmdLine@2
     displayName: Build and publish NuGet package
     inputs:

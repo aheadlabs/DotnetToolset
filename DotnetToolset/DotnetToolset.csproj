@@ -27,8 +27,6 @@
       <PackagePath></PackagePath>
     </None>
     <None Include=".devops\pipeline-build-dotnettoolset-ci.yml" />
-    <None Include=".devops\pipeline-template-build.yml" />
-    <None Include=".devops\pipeline-template-python-setup.yml" />
   </ItemGroup>
 
 </Project>

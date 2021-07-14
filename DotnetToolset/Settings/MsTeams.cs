@@ -6,8 +6,8 @@
 	public class MsTeams
 	{
 		/// <summary>
-		/// URL for the web hook
+		/// Secret name where the URL for the web hook is stored
 		/// </summary>
-		public string WebHookUrl { get; set; }
+		public string WebHookUrlSecretName { get; set; }
 	}
 }

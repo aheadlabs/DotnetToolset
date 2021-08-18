@@ -120,4 +120,7 @@
   <data name="b_RestClientNotReadySetBaseUrl" xml:space="preserve">
     <value> The REST client is not ready. Please set the BaseUrl property.</value>
   </data>
+  <data name="p_LoggingExceptionTree" xml:space="preserve">
+    <value>Logging exception tree: {0} of {1}</value>
+  </data>
 </root>

@@ -68,5 +68,14 @@ namespace DotnetToolset.Resources {
                 return ResourceManager.GetString("b_RestClientNotReadySetBaseUrl", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging exception tree: {0} of {1}.
+        /// </summary>
+        public static string p_LoggingExceptionTree {
+            get {
+                return ResourceManager.GetString("p_LoggingExceptionTree", resourceCulture);
+            }
+        }
     }
 }

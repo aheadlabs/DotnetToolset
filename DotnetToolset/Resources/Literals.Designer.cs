@@ -61,6 +61,15 @@ namespace DotnetToolset.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filling character length must be 1.
+        /// </summary>
+        public static string b_FillingCharacterLengthMustBeOne {
+            get {
+                return ResourceManager.GetString("b_FillingCharacterLengthMustBeOne", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  The REST client is not ready. Please set the BaseUrl property..
         /// </summary>
         public static string b_RestClientNotReadySetBaseUrl {

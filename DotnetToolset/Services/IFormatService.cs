@@ -13,5 +13,31 @@ namespace DotnetToolset.Services
 		/// <param name="fillingType">Left or right filling</param>
 		/// <returns></returns>
 		string Fill(int data, int fillLength, string character = "0", FillingType fillingType = FillingType.Left);
+<<<<<<< Updated upstream
 	}
+=======
+
+        /// <summary>
+        /// Performs a masking of the value passed applying octal conversion and adding a mask
+        /// </summary>
+        /// <returns> String processed </returns>string RemoveAccent(string txt);
+        string GetSlug(int id);
+
+        /// <summary>
+        /// Slugifies a text to be suitable for url use.
+        /// </summary>
+        /// <param name="phrase">String to be processed</param>
+        /// <returns> Slug of the phrase </returns>
+        string NormalizeString(string phrase);
+
+        /// <summary>
+        /// Removes accents from a string
+        /// </summary>
+        /// <returns> String processed </returns>
+        string RemoveAccent(string txt);
+
+
+
+    }
+>>>>>>> Stashed changes
 }

@@ -2,6 +2,11 @@
 using DotnetToolset.Resources;
 using Microsoft.Extensions.Logging;
 using System;
+<<<<<<< Updated upstream
+=======
+using System.Text.RegularExpressions;
+using Constants = DotnetToolset.Settings.Constants;
+>>>>>>> Stashed changes
 
 namespace DotnetToolset.Services
 {
@@ -27,5 +32,34 @@ namespace DotnetToolset.Services
 			string fillString = numberOfCharactersToFill > 0 ? new string(char.Parse(character), numberOfCharactersToFill) : string.Empty;
 			return fillingType == FillingType.Left ? $"{fillString}{data}" : $"{data}{fillString}";
 		}
+<<<<<<< Updated upstream
+=======
+
+        /// <inheritdoc />
+        public string NormalizeString (string phrase) 
+        { 
+            string str = RemoveAccent(phrase).ToLower(); 
+            // Invalid chars           
+            str = Regex.Replace(str, @"[^a-z0-9\s-]", ""); 
+            // Convert multiple spaces into one space   
+            str = Regex.Replace(str, @"\s+", " ").Trim(); 
+            // Cut and trim 
+            str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();   
+            str = Regex.Replace(str, @"\s", "-"); // Hyphens   
+            return str; 
+        } 
+
+        /// <inheritdoc />
+        public string RemoveAccent(string txt) 
+        { 
+            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
+            return System.Text.Encoding.ASCII.GetString(bytes); 
+        }
+
+        public string GetSlug(int id)
+        {
+            return Convert.ToString(id + Constants.Mask, 8);
+        }
+>>>>>>> Stashed changes
 	}
 }

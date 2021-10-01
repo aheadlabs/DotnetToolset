@@ -15,5 +15,7 @@ namespace DotnetToolset.Settings
 			public const string Staging = "staging";
 			public const string Production = "production";
 		}
-	}
+
+        public const int Mask = 1000;
+    }
 }

@@ -3,6 +3,8 @@ using DotnetToolset.Resources;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Text.RegularExpressions;
+using Constants = DotnetToolset.Settings.Constants;
+
 
 namespace DotnetToolset.Services
 {
@@ -30,7 +32,7 @@ namespace DotnetToolset.Services
 		}
 
         /// <inheritdoc />
-        public string GenerateSlug (string phrase) 
+        public string NormalizeString (string phrase) 
         { 
             string str = RemoveAccent(phrase).ToLower(); 
             // Invalid chars           
@@ -49,5 +51,10 @@ namespace DotnetToolset.Services
             byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
             return System.Text.Encoding.ASCII.GetString(bytes); 
         }
-	}
+
+        public string GetSlug(int id)
+        {
+            return Convert.ToString(id + Constants.Mask, 8).Replace("0o","");
+        }
+    }
 }

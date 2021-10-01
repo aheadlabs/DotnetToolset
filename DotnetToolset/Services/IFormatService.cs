@@ -13,9 +13,6 @@ namespace DotnetToolset.Services
 		/// <param name="fillingType">Left or right filling</param>
 		/// <returns></returns>
 		string Fill(int data, int fillLength, string character = "0", FillingType fillingType = FillingType.Left);
-<<<<<<< Updated upstream
-	}
-=======
 
         /// <summary>
         /// Performs a masking of the value passed applying octal conversion and adding a mask
@@ -36,8 +33,5 @@ namespace DotnetToolset.Services
         /// <returns> String processed </returns>
         string RemoveAccent(string txt);
 
-
-
     }
->>>>>>> Stashed changes
 }

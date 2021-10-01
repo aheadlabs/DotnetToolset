@@ -3,12 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>DotnetToolset</RootNamespace>
-<<<<<<< Updated upstream
-    <Version>0.7.0</Version>
-=======
     <Version>0.9.0</Version>
->>>>>>> Stashed changes
-	  <Company>Ahead Labs, S.L.</Company>
+    <Company>Ahead Labs, S.L.</Company>
     <Authors>Ahead Labs, S.L.</Authors>
     <Description>Opinionated repository that contains common .NET tools and patterns to simplify things and reuse code.</Description>
     <Copyright>Ahead Labs, S.L.</Copyright>

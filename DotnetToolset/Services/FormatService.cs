@@ -2,11 +2,9 @@
 using DotnetToolset.Resources;
 using Microsoft.Extensions.Logging;
 using System;
-<<<<<<< Updated upstream
-=======
 using System.Text.RegularExpressions;
 using Constants = DotnetToolset.Settings.Constants;
->>>>>>> Stashed changes
+
 
 namespace DotnetToolset.Services
 {
@@ -23,7 +21,7 @@ namespace DotnetToolset.Services
 		/// <inheritdoc />
 		public string Fill(int data, int fillLength, string character = "0", FillingType fillingType = FillingType.Left)
 		{
-			if (character.Length > 1 || String.IsNullOrEmpty(character))
+			if (character.Length > 1 || string.IsNullOrEmpty(character))
 			{
 				throw new ArgumentException(Literals.b_FillingCharacterLengthMustBeOne, nameof(character));
 			}
@@ -32,8 +30,6 @@ namespace DotnetToolset.Services
 			string fillString = numberOfCharactersToFill > 0 ? new string(char.Parse(character), numberOfCharactersToFill) : string.Empty;
 			return fillingType == FillingType.Left ? $"{fillString}{data}" : $"{data}{fillString}";
 		}
-<<<<<<< Updated upstream
-=======
 
         /// <inheritdoc />
         public string NormalizeString (string phrase) 
@@ -58,8 +54,7 @@ namespace DotnetToolset.Services
 
         public string GetSlug(int id)
         {
-            return Convert.ToString(id + Constants.Mask, 8);
+            return Convert.ToString(id + Constants.Mask, 8).Replace("0o","");
         }
->>>>>>> Stashed changes
-	}
+    }
 }

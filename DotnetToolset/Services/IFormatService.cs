@@ -2,8 +2,21 @@
 
 namespace DotnetToolset.Services
 {
-    public interface IFormatService
-    {
+	public interface IFormatService
+	{
+        /// <summary>
+        /// Decodes Base64 encoded text to plain text
+        /// </summary>
+        /// <param name="base64EncodedData">Base64 encoded text</param>
+        /// <returns></returns>
+		string Base64Decode(string base64EncodedData);
+		
+        /// <summary>
+        /// Encodes plain text to Base64 encoded text
+        /// </summary>
+        /// <param name="plainTextData">Plain text</param>
+        /// <returns></returns>
+		string Base64Encode(string plainTextData);
 
         /// <summary>
         /// Fills the data using the specified character (or '0' by default)
@@ -33,6 +46,5 @@ namespace DotnetToolset.Services
         /// </summary>
         /// <returns> String processed </returns>
         string RemoveAccent(string txt);
-
-    }
+	}
 }

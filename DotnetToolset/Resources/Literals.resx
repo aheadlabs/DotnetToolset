@@ -120,6 +120,12 @@
   <data name="b_FillingCharacterLengthMustBeOne" xml:space="preserve">
     <value>Filling character length must be 1</value>
   </data>
+  <data name="b_ListParameterMustNotBeNull" xml:space="preserve">
+    <value>List parameter must not be null when we are in a list expression</value>
+  </data>
+  <data name="b_NoExpressionsProvidedToBeJoined" xml:space="preserve">
+    <value>There were no expressions provided to be joined. No action will be taken.</value>
+  </data>
   <data name="b_RestClientNotReadySetBaseUrl" xml:space="preserve">
     <value> The REST client is not ready. Please set the BaseUrl property.</value>
   </data>

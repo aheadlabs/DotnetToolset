@@ -70,6 +70,24 @@ namespace DotnetToolset.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List parameter must not be null when we are in a list expression.
+        /// </summary>
+        public static string b_ListParameterMustNotBeNull {
+            get {
+                return ResourceManager.GetString("b_ListParameterMustNotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There were no expressions provided to be joined. No action will be taken..
+        /// </summary>
+        public static string b_NoExpressionsProvidedToBeJoined {
+            get {
+                return ResourceManager.GetString("b_NoExpressionsProvidedToBeJoined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  The REST client is not ready. Please set the BaseUrl property..
         /// </summary>
         public static string b_RestClientNotReadySetBaseUrl {

@@ -41,6 +41,10 @@ namespace DotnetToolset.Services
 			// Create comparison expression
 			switch (expressionComparisonOperator)
 			{
+				case LinqExpressionComparisonOperator.Contains:
+					MethodInfo containsMethod = typeof(string).GetMethod("Contains", new [] { typeof(string) });
+					resultExpression = Expression.Call(propertyExpression, containsMethod!, valueExpression);
+					break;
 				case LinqExpressionComparisonOperator.LessThan:
 					resultExpression = Expression.LessThan(propertyExpression, valueExpression);
 					break;

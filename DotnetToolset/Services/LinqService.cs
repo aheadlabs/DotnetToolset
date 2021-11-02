@@ -41,6 +41,10 @@ namespace DotnetToolset.Services
 			// Create comparison expression
 			switch (expressionComparisonOperator)
 			{
+				case LinqExpressionComparisonOperator.Contains:
+					MethodInfo containsMethod = typeof(string).GetMethod("Contains", new [] { typeof(string) });
+					resultExpression = Expression.Call(propertyExpression, containsMethod!, valueExpression);
+					break;
 				case LinqExpressionComparisonOperator.LessThan:
 					resultExpression = Expression.LessThan(propertyExpression, valueExpression);
 					break;
@@ -68,7 +72,7 @@ namespace DotnetToolset.Services
 		public Expression<Func<TModel, bool>> GenerateLambdaFromExpressions<TModel>(ParameterExpression parameter, IList<(LinqExpressionJoinCondition? joinCondition, Expression expression)> parts)
 		{
 			Expression resultExpression = null;
-			LinqExpressionJoinCondition defaultJoinCondition = LinqExpressionJoinCondition.And;
+			LinqExpressionJoinCondition defaultJoinCondition = LinqExpressionJoinCondition.AndAlso;
 
 			// Remove all parts that are completely null
 			parts = parts.Where(part => part != (null, null)).ToList();
@@ -123,7 +127,11 @@ namespace DotnetToolset.Services
 		{
 			switch (joinCondition)
 			{
+				case LinqExpressionJoinCondition.And:
+					return Expression.And(left, right);
 				case LinqExpressionJoinCondition.Or:
+					return Expression.Or(left, right);
+				case LinqExpressionJoinCondition.OrElse:
 					return Expression.OrElse(left, right);
 				default:
 					return Expression.AndAlso(left, right);

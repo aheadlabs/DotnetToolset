@@ -5,6 +5,7 @@
 	/// </summary>
 	public enum LinqExpressionComparisonOperator
 	{
+		Contains,
 		Equal,
 		GreaterThan,
 		GreaterThanOrEqual,
@@ -18,13 +19,23 @@
 	public enum LinqExpressionJoinCondition
 	{
 		/// <summary>
-		/// Equals to LINQ Expression.AndAlso
+		/// Equals to LINQ expression And
 		/// </summary>
 		And,
 
 		/// <summary>
-		/// Equals to LINQ Expression.OrElse
+		/// Equals to LINQ Expression.AndAlso (short-circuits)
 		/// </summary>
-		Or
+		AndAlso,
+
+		/// <summary>
+		/// Equals to LINQ Expression.Or
+		/// </summary>
+		Or,
+
+		/// <summary>
+		/// Equals to LINQ Expression.OrElse (short-circuits)
+		/// </summary>
+		OrElse
 	}
 }

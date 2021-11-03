@@ -5,18 +5,32 @@ namespace DotnetToolset.Services
 	public interface IFormatService
 	{
         /// <summary>
-        /// Decodes Base64 encoded text to plain text
+        /// Decodes Base64 encoded text to plain ASCII text
+        /// </summary>
+        /// <param name="base64EncodedData">Base64 encoded text</param>
+        /// <returns></returns>
+		string Base64DecodeToUtf7(string base64EncodedData);
+
+        /// <summary>
+        /// Decodes Base64 encoded text to plain UTF-8 text
         /// </summary>
         /// <param name="base64EncodedData">Base64 encoded text</param>
         /// <returns></returns>
 		string Base64Decode(string base64EncodedData);
 		
         /// <summary>
-        /// Encodes plain text to Base64 encoded text
+        /// Encodes plain UTF-8 text to Base64 encoded text
         /// </summary>
         /// <param name="plainTextData">Plain text</param>
         /// <returns></returns>
 		string Base64Encode(string plainTextData);
+
+        /// <summary>
+        /// Encodes plain ASCII text to Base64 encoded text
+        /// </summary>
+        /// <param name="plainAsciiTextData">Plain text</param>
+        /// <returns></returns>
+        string Base64EncodeFromUtf7(string plainUtf7TextData);
 
         /// <summary>
         /// Fills the data using the specified character (or '0' by default)

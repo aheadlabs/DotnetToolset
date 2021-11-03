@@ -25,9 +25,23 @@ namespace DotnetToolset.Services
 		}
 
 		/// <inheritdoc />
+		public string Base64DecodeToUtf7(string base64EncodedData)
+		{
+			byte[] bytes = Convert.FromBase64String(base64EncodedData);
+			return System.Text.Encoding.UTF7.GetString(bytes);
+		}
+
+		/// <inheritdoc />
 		public string Base64Encode(string plainTextData)
 		{
 			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(plainTextData);
+			return System.Convert.ToBase64String(bytes);
+		}
+
+		/// <inheritdoc />
+		public string Base64EncodeFromUtf7(string plainUtf7TextData)
+		{
+			byte[] bytes = System.Text.Encoding.UTF7.GetBytes(plainUtf7TextData);
 			return System.Convert.ToBase64String(bytes);
 		}
 

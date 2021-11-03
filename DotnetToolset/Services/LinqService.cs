@@ -30,20 +30,23 @@ namespace DotnetToolset.Services
 			}
 
 			// Find out if property name is simple or complex (using dot notation)
-			string[] propertyParts = property.Split(".", 2, StringSplitOptions.RemoveEmptyEntries);
-			string propertyName = propertyParts.Length == 1 ? propertyParts[0] : propertyParts[1];
+			string[] propertyParts = property.Split(".", StringSplitOptions.RemoveEmptyEntries);
 
 			// Create expression
-			MemberExpression propertyExpression = Expression.Property(isListExpression ? listParameter : parameter, propertyName); // Property
+			Expression propertyExpression = GetMemberExpression(parameter, property); // Property
 			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
 			Expression resultExpression = null;
-
+			
 			// Create comparison expression
 			switch (expressionComparisonOperator)
 			{
 				case LinqExpressionComparisonOperator.Contains:
 					MethodInfo containsMethod = typeof(string).GetMethod("Contains", new [] { typeof(string) });
 					resultExpression = Expression.Call(propertyExpression, containsMethod!, valueExpression);
+					break;
+				case LinqExpressionComparisonOperator.ContainsInt:
+					MethodInfo containsIntMethod = typeof(int).GetMethod("Contains", new [] { typeof(int) });
+					resultExpression = Expression.Call(propertyExpression, containsIntMethod!, valueExpression);
 					break;
 				case LinqExpressionComparisonOperator.LessThan:
 					resultExpression = Expression.LessThan(propertyExpression, valueExpression);
@@ -111,16 +114,24 @@ namespace DotnetToolset.Services
 				: null;
 		}
 
-		private Expression GetMemberExpression(Expression param, string propertyName)
+		/// <summary>
+		/// Gets the property expression
+		/// </summary>
+		/// <param name="parameterExpression"></param>
+		/// <param name="propertyName"></param>
+		/// <returns></returns>
+		private Expression GetMemberExpression(Expression parameterExpression, string propertyName)
 		{
+			// Return property if it is a simple name (no dots)
 			if (!propertyName.Contains("."))
 			{
-				return Expression.Property(param, propertyName);
+				return Expression.Property(parameterExpression, propertyName);
 			}
 
+			// Process recursively to get a complex property expression: p.property1.property2 instead p.property1
 			int index = propertyName.IndexOf(".", StringComparison.Ordinal);
-			MemberExpression subParam = Expression.Property(param, propertyName.Substring(0, index));
-			return GetMemberExpression(subParam, propertyName.Substring(index + 1));
+			MemberExpression subProperty = Expression.Property(parameterExpression, propertyName.Substring(0, index));
+			return GetMemberExpression(subProperty, propertyName.Substring(index + 1));
 		}
 
 		private Expression JoinExpressions(Expression left, LinqExpressionJoinCondition joinCondition, Expression right)

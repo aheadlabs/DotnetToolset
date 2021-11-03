@@ -6,6 +6,7 @@
 	public enum LinqExpressionComparisonOperator
 	{
 		Contains,
+		ContainsInt,
 		Equal,
 		GreaterThan,
 		GreaterThanOrEqual,

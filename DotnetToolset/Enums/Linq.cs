@@ -5,13 +5,32 @@
 	/// </summary>
 	public enum LinqExpressionComparisonOperator
 	{
-		Contains,
-		ContainsInt,
 		Equal,
 		GreaterThan,
 		GreaterThanOrEqual,
 		LessThan,
 		LessThanOrEqual
+	}
+
+	public enum LinqExpressionMethodOperator
+	{
+		/// <summary>
+		/// int.Contains()
+		/// </summary>
+		IntContains,
+
+		/// <summary>
+		/// string.Contains()
+		/// </summary>
+		StringContains
+	}
+
+	public enum LinqExpressListOperator
+	{
+		/// <summary>
+		/// IEnumerable.Any(lambda-expression)
+		/// </summary>
+		AnyLambda
 	}
 
 	/// <summary>
@@ -39,4 +58,6 @@
 		/// </summary>
 		OrElse
 	}
+
+
 }

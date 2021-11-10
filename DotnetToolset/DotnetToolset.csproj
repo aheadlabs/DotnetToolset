@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>DotnetToolset</RootNamespace>
-    <Version>0.14.2</Version>
+    <Version>0.14.3</Version>
     <Company>Ahead Labs, S.L.</Company>
     <Authors>Ahead Labs, S.L.</Authors>
     <Description>Opinionated repository that contains common .NET tools and patterns to simplify things and reuse code.</Description>
@@ -16,8 +16,6 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <IncludeSymbols>true</IncludeSymbols>
-	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>

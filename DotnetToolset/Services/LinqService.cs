@@ -65,16 +65,16 @@ namespace DotnetToolset.Services
 		/// <inheritdoc />
 		public Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionMethodOperator expressionMethodOperator, object value, Type valueType)
 		{
-			Expression propertyExpression = GetMemberExpression(parameter, property); // Property
+			Expression propertyExpression = GenerateMemberExpression(parameter, property); // Property
 			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
 			return GenerateComparisonExpression(propertyExpression, expressionMethodOperator, valueExpression);
 		}
 
 		/// <inheritdoc />
-		public Expression GenerateComparisonExpression(string navigationPropertyName, LinqExpressListOperator expressListOperator, ParameterExpression parameter, LambdaExpression lambda)
+		public Expression GenerateComparisonExpression(string navigationPropertyName, LinqExpressionListOperator expressionListOperator, ParameterExpression parameter, LambdaExpression lambda)
 		{
 			// Parse property name
-			Expression member = GetMemberExpression(parameter, navigationPropertyName);
+			Expression member = GenerateMemberExpression(parameter, navigationPropertyName);
 
 			// Get a reference to Enumerable.Any() method
 			MethodInfo anyMethodInfo = typeof(Enumerable).GetMethods().First(m => m.Name == "Any" && m.GetParameters().Length == 2);
@@ -83,9 +83,9 @@ namespace DotnetToolset.Services
 			Type type = parameter.Type.GetProperty(navigationPropertyName)?.PropertyType.GetGenericArguments()[0];
 			anyMethodInfo = anyMethodInfo.MakeGenericMethod(type);
 
-			switch (expressListOperator)
+			switch (expressionListOperator)
 			{
-				case LinqExpressListOperator.AnyLambda:
+				case LinqExpressionListOperator.AnyLambda:
 					return Expression.Call(anyMethodInfo, member, lambda);
 			}
 
@@ -95,15 +95,29 @@ namespace DotnetToolset.Services
 		/// <inheritdoc />
 		public Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType)
 		{
-			// Find out if property name is simple or complex (using dot notation)
-			string[] propertyParts = property.Split(".", StringSplitOptions.RemoveEmptyEntries);
-
 			// Create expression
-			Expression propertyExpression = GetMemberExpression(parameter, property); // Property
+			Expression propertyExpression = GenerateMemberExpression(parameter, property); // Property
 			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
-			Expression resultExpression = null;
 			
 			return GenerateComparisonExpression(propertyExpression, expressionComparisonOperator, valueExpression);
+		}
+		
+		/// <inheritdoc />
+		public Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator)
+		{
+			MethodInfo methodInfo;
+
+			switch (expressionListOperator)
+			{
+				case LinqExpressionListOperator.First:
+					methodInfo = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(method => method.Name == "First" && method.GetParameters().Length == 1);
+					break;
+				default:
+					return null;
+			}
+
+			methodInfo = methodInfo.MakeGenericMethod(leftGenericType);
+			return Expression.Call(methodInfo, left);
 		}
 
 		/// <inheritdoc />
@@ -150,18 +164,40 @@ namespace DotnetToolset.Services
 		}
 
 		/// <inheritdoc />
-		public Expression GetMemberExpression(Expression parameterExpression, string propertyName)
+		public Expression GenerateMemberExpression(Expression parameterExpression, string memberName)
 		{
 			// Return property if it is a simple name (no dots)
-			if (!propertyName.Contains("."))
+			if (!memberName.Contains("."))
 			{
-				return Expression.Property(parameterExpression, propertyName);
+				return Expression.Property(parameterExpression, memberName);
 			}
 
 			// Process recursively to get a complex property expression: p.property1.property2 instead p.property1
-			int index = propertyName.IndexOf(".", StringComparison.Ordinal);
-			MemberExpression subProperty = Expression.Property(parameterExpression, propertyName.Substring(0, index));
-			return GetMemberExpression(subProperty, propertyName.Substring(index + 1));
+			int index = memberName.IndexOf(".", StringComparison.Ordinal);
+			MemberExpression subProperty = Expression.Property(parameterExpression, memberName.Substring(0, index));
+			return GenerateMemberExpression(subProperty, memberName.Substring(index + 1));
+		}
+
+		/// <inheritdoc />
+		public MemberExpression GenerateMemberExpression(ParameterExpression propertyParameter, Type basePropertyType, string memberName)
+		{
+			PropertyInfo property = basePropertyType.GetProperty(memberName);
+			return Expression.MakeMemberAccess(propertyParameter, property!);
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
+			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
+		{
+			string methodName = expressionOrderingOperator is LinqExpressionOrderingOperator.Ascending ? "OrderBy": "OrderByDescending";
+
+			// Create OrderBy() or OrderByDescending() methods
+			MethodInfo orderByMethod = typeof(Enumerable)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.First(method => method.Name == methodName && method.GetParameters().Length == 2);
+			orderByMethod = orderByMethod.MakeGenericMethod(enumerableGenericType, selectorPropertyAccessType);
+
+			return Expression.Call(orderByMethod, basePropertyAccess, selectorLambdaExpression);
 		}
 
 		private Expression JoinExpressions(Expression left, LinqExpressionJoinCondition joinCondition, Expression right)

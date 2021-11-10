@@ -28,6 +28,15 @@ namespace DotnetToolset.Services
 		Expression GenerateComparisonExpression(Expression left, LinqExpressionComparisonOperator expressionComparisonOperator, Expression right);
 
 		/// <summary>
+		/// Generates a filter expression that affects an IEnumerable, like users.First()
+		/// </summary>
+		/// <param name="left">IEnumerable expression, like users</param>
+		/// <param name="leftGenericType">Type for the generic contained in the IEnumerable. T in IEnumerable of T.</param>
+		/// <param name="expressionListOperator">Filter method operator, like .First()</param>
+		/// <returns></returns>
+		Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator);
+
+		/// <summary>
 		/// Generates a comparison expression based on two existing expressions and a method that connects them, like user.Name.Contains('John')
 		/// </summary>
 		/// <param name="left">Property expression, like user.Name</param>
@@ -51,11 +60,11 @@ namespace DotnetToolset.Services
 		/// Generates a comparison expression between a IEnumerable and an Any(lambda-expression) method that contains a lambda expression, like users.Any(u => u.Name = 'John').
 		/// </summary>
 		/// <param name="navigationPropertyName">Property name of the base entity that contains the navigation property</param>
-		/// <param name="expressListOperator"></param>
+		/// <param name="expressionListOperator"></param>
 		/// <param name="parameter">Parameter for the lambda expression</param>
 		/// <param name="lambda">Lambda expression for the linked navigation property</param>
 		/// <returns></returns>
-		Expression GenerateComparisonExpression(string navigationPropertyName, LinqExpressListOperator expressListOperator, ParameterExpression parameter, LambdaExpression lambda);
+		Expression GenerateComparisonExpression(string navigationPropertyName, LinqExpressionListOperator expressionListOperator, ParameterExpression parameter, LambdaExpression lambda);
 
 		/// <summary>
 		/// Generates a Lambda comparison expression
@@ -80,20 +89,32 @@ namespace DotnetToolset.Services
 		Expression<Func<TModel, bool>> GenerateLambdaFromExpressions<TModel>(ParameterExpression parameter, IList<(LinqExpressionJoinCondition? joinCondition, Expression expression)> parts);
 
 		/// <summary>
-		/// Gets the property expression
+		/// Generates a property member expression
 		/// </summary>
-		/// <param name="parameterExpression"></param>
-		/// <param name="propertyName"></param>
+		/// <param name="parameterExpression">Base property to access the member from</param>
+		/// <param name="memberName">Member name</param>
 		/// <returns></returns>
-		Expression GetMemberExpression(Expression parameterExpression, string propertyName);
+		Expression GenerateMemberExpression(Expression parameterExpression, string memberName);
 
 		/// <summary>
-		/// Processes the expression as a list expression (additional coding is needed)
+		/// Generates a property member access expression, like property.member
 		/// </summary>
-		/// <param name="basePropertyName">Property name of the base entity that contains the navigation property</param>
-		/// <param name="parameter">Parameter for the lambda expression</param>
-		/// <param name="lambda">Lambda expression for the linked navigation property</param>
+		/// <param name="propertyParameter">Parameter for the base property</param>
+		/// <param name="basePropertyType">Type for the base property to access the member from</param>
+		/// <param name="memberName">Member name</param>
 		/// <returns></returns>
-		//Expression ProcessListExpression(string basePropertyName, ParameterExpression parameter, LambdaExpression lambda);
+		MemberExpression GenerateMemberExpression(ParameterExpression propertyParameter, Type basePropertyType, string memberName);
+
+		/// <summary>
+		/// Generates an ordering expression, like users.OrderByDescending(u => u.LastLoginDate) where users is IEnumerable of T
+		/// </summary>
+		/// <param name="expressionOrderingOperator">Ascending (OrderBy) or descending (OrderByDescending)</param>
+		/// <param name="enumerableGenericType">IEnumerable generic type, like T in IEnumerable of T (users)</param>
+		/// <param name="selectorPropertyAccessType">Type for the selector expression, like DateTime in u.LastLoginDate</param>
+		/// <param name="basePropertyAccess">Selector property expression, like users</param>
+		/// <param name="selectorLambdaExpression">Lambda expression for the ordering selector, like u => u.LastLoginDate</param>
+		/// <returns></returns>
+		Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
+			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression);
 	}
 }

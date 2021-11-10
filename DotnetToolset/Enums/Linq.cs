@@ -1,7 +1,7 @@
 ﻿namespace DotnetToolset.Enums
 {
 	/// <summary>
-	/// Comparison operators used in Lambda expressions
+	/// Comparison operators used in lambda expressions
 	/// </summary>
 	public enum LinqExpressionComparisonOperator
 	{
@@ -10,27 +10,6 @@
 		GreaterThanOrEqual,
 		LessThan,
 		LessThanOrEqual
-	}
-
-	public enum LinqExpressionMethodOperator
-	{
-		/// <summary>
-		/// int.Contains()
-		/// </summary>
-		IntContains,
-
-		/// <summary>
-		/// string.Contains()
-		/// </summary>
-		StringContains
-	}
-
-	public enum LinqExpressListOperator
-	{
-		/// <summary>
-		/// IEnumerable.Any(lambda-expression)
-		/// </summary>
-		AnyLambda
 	}
 
 	/// <summary>
@@ -59,5 +38,51 @@
 		OrElse
 	}
 
+	/// <summary>
+	/// List operators used in lambda expressions
+	/// </summary>
+	public enum LinqExpressionListOperator
+	{
+		/// <summary>
+		/// IEnumerable.Any(lambda-expression)
+		/// </summary>
+		AnyLambda,
 
+		/// <summary>
+		/// IEnumerable.First()
+		/// </summary>
+		First
+	}
+
+	/// <summary>
+	/// Method operators used in lambda expressions
+	/// </summary>
+	public enum LinqExpressionMethodOperator
+	{
+		/// <summary>
+		/// int.Contains()
+		/// </summary>
+		IntContains,
+
+		/// <summary>
+		/// string.Contains()
+		/// </summary>
+		StringContains
+	}
+
+	/// <summary>
+	/// Ordering operators used in lambda expressions
+	/// </summary>
+	public enum LinqExpressionOrderingOperator
+	{
+		/// <summary>
+		/// IEnumerable.OrderBy()
+		/// </summary>
+		Ascending,
+
+		/// <summary>
+		/// IEnumerable.OrderByDescending()
+		/// </summary>
+		Descending
+	}
 }

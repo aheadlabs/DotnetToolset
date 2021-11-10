@@ -17,58 +17,107 @@ namespace DotnetToolset.Services
 		{
 			_logger = logger;
 		}
-
+		
 		/// <inheritdoc />
-		public Expression GenerateLambdaComparisonExpression(ParameterExpression parameter, string property,
-			LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType, 
-			bool isListExpression = false, ParameterExpression listParameter = null)
+		public Expression GenerateComparisonExpression(Expression baseExpression, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType)
 		{
-			// Check if listParameter is passed when it is a list expression
-			if (isListExpression && listParameter is null)
-			{
-				throw new ArgumentException(Res.b_ListParameterMustNotBeNull, nameof(listParameter));
-			}
-
-			// Find out if property name is simple or complex (using dot notation)
-			string[] propertyParts = property.Split(".", StringSplitOptions.RemoveEmptyEntries);
-
-			// Create expression
-			Expression propertyExpression = GetMemberExpression(parameter, property); // Property
-			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
-			Expression resultExpression = null;
-			
-			// Create comparison expression
+			Expression left = Expression.Property(baseExpression, property);
+			Expression right = Expression.Constant(value, valueType);
+			return GenerateComparisonExpression(left, expressionComparisonOperator, right);
+		}
+		
+		/// <inheritdoc />
+		public Expression GenerateComparisonExpression(Expression left, LinqExpressionComparisonOperator expressionComparisonOperator, Expression right)
+		{
 			switch (expressionComparisonOperator)
 			{
-				case LinqExpressionComparisonOperator.Contains:
-					MethodInfo containsMethod = typeof(string).GetMethod("Contains", new [] { typeof(string) });
-					resultExpression = Expression.Call(propertyExpression, containsMethod!, valueExpression);
-					break;
-				case LinqExpressionComparisonOperator.ContainsInt:
-					MethodInfo containsIntMethod = typeof(int).GetMethod("Contains", new [] { typeof(int) });
-					resultExpression = Expression.Call(propertyExpression, containsIntMethod!, valueExpression);
-					break;
 				case LinqExpressionComparisonOperator.LessThan:
-					resultExpression = Expression.LessThan(propertyExpression, valueExpression);
-					break;
+					return Expression.LessThan(left, right);
 				case LinqExpressionComparisonOperator.LessThanOrEqual:
-					resultExpression = Expression.LessThanOrEqual(propertyExpression, valueExpression);
-					break;
+					return Expression.LessThanOrEqual(left, right);
 				case LinqExpressionComparisonOperator.Equal:
-					resultExpression = Expression.Equal(propertyExpression, valueExpression);
-					break;
+					return Expression.Equal(left, right);
 				case LinqExpressionComparisonOperator.GreaterThanOrEqual:
-					resultExpression = Expression.GreaterThanOrEqual(propertyExpression, valueExpression);
-					break;
+					return Expression.GreaterThanOrEqual(left, right);
 				case LinqExpressionComparisonOperator.GreaterThan:
-					resultExpression = Expression.GreaterThan(propertyExpression, valueExpression);
-					break;
+					return Expression.GreaterThan(left, right);
 			}
 
-			// Process expression as a list statement if needed and return
-			return isListExpression && resultExpression != null
-				? ProcessListExpression(propertyParts[0], parameter, Expression.Lambda(resultExpression, listParameter))
-				: resultExpression;
+			return null;
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateComparisonExpression(Expression left, LinqExpressionMethodOperator expressionMethodOperator, Expression right)
+		{
+			switch (expressionMethodOperator)
+			{
+				case LinqExpressionMethodOperator.StringContains:
+					MethodInfo stringContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+					return Expression.Call(left, stringContainsMethod!, right);
+				case LinqExpressionMethodOperator.IntContains:
+					MethodInfo intContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(int) });
+					return Expression.Call(left, intContainsMethod!, right);
+			}
+			
+			return null;
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionMethodOperator expressionMethodOperator, object value, Type valueType)
+		{
+			Expression propertyExpression = GenerateMemberExpression(parameter, property); // Property
+			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
+			return GenerateComparisonExpression(propertyExpression, expressionMethodOperator, valueExpression);
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateComparisonExpression(string navigationPropertyName, LinqExpressionListOperator expressionListOperator, ParameterExpression parameter, LambdaExpression lambda)
+		{
+			// Parse property name
+			Expression member = GenerateMemberExpression(parameter, navigationPropertyName);
+
+			// Get a reference to Enumerable.Any() method
+			MethodInfo anyMethodInfo = typeof(Enumerable).GetMethods().First(m => m.Name == "Any" && m.GetParameters().Length == 2);
+
+			// Create new method and return a call to it
+			Type type = parameter.Type.GetProperty(navigationPropertyName)?.PropertyType.GetGenericArguments()[0];
+			anyMethodInfo = anyMethodInfo.MakeGenericMethod(type);
+
+			switch (expressionListOperator)
+			{
+				case LinqExpressionListOperator.AnyLambda:
+					return Expression.Call(anyMethodInfo, member, lambda);
+			}
+
+			return null;
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType)
+		{
+			// Create expression
+			Expression propertyExpression = GenerateMemberExpression(parameter, property); // Property
+			ConstantExpression valueExpression = Expression.Constant(value, valueType); // Value
+			
+			return GenerateComparisonExpression(propertyExpression, expressionComparisonOperator, valueExpression);
+		}
+		
+		/// <inheritdoc />
+		public Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator)
+		{
+			MethodInfo methodInfo;
+
+			switch (expressionListOperator)
+			{
+				case LinqExpressionListOperator.First:
+					methodInfo = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(method => method.Name == "First" && method.GetParameters().Length == 1);
+					break;
+				default:
+					return null;
+			}
+
+			methodInfo = methodInfo.MakeGenericMethod(leftGenericType);
+			return Expression.Call(methodInfo, left);
 		}
 
 		/// <inheritdoc />
@@ -114,24 +163,41 @@ namespace DotnetToolset.Services
 				: null;
 		}
 
-		/// <summary>
-		/// Gets the property expression
-		/// </summary>
-		/// <param name="parameterExpression"></param>
-		/// <param name="propertyName"></param>
-		/// <returns></returns>
-		private Expression GetMemberExpression(Expression parameterExpression, string propertyName)
+		/// <inheritdoc />
+		public Expression GenerateMemberExpression(Expression parameterExpression, string memberName)
 		{
 			// Return property if it is a simple name (no dots)
-			if (!propertyName.Contains("."))
+			if (!memberName.Contains("."))
 			{
-				return Expression.Property(parameterExpression, propertyName);
+				return Expression.Property(parameterExpression, memberName);
 			}
 
 			// Process recursively to get a complex property expression: p.property1.property2 instead p.property1
-			int index = propertyName.IndexOf(".", StringComparison.Ordinal);
-			MemberExpression subProperty = Expression.Property(parameterExpression, propertyName.Substring(0, index));
-			return GetMemberExpression(subProperty, propertyName.Substring(index + 1));
+			int index = memberName.IndexOf(".", StringComparison.Ordinal);
+			MemberExpression subProperty = Expression.Property(parameterExpression, memberName.Substring(0, index));
+			return GenerateMemberExpression(subProperty, memberName.Substring(index + 1));
+		}
+
+		/// <inheritdoc />
+		public MemberExpression GenerateMemberExpression(ParameterExpression propertyParameter, Type basePropertyType, string memberName)
+		{
+			PropertyInfo property = basePropertyType.GetProperty(memberName);
+			return Expression.MakeMemberAccess(propertyParameter, property!);
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
+			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
+		{
+			string methodName = expressionOrderingOperator is LinqExpressionOrderingOperator.Ascending ? "OrderBy": "OrderByDescending";
+
+			// Create OrderBy() or OrderByDescending() methods
+			MethodInfo orderByMethod = typeof(Enumerable)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.First(method => method.Name == methodName && method.GetParameters().Length == 2);
+			orderByMethod = orderByMethod.MakeGenericMethod(enumerableGenericType, selectorPropertyAccessType);
+
+			return Expression.Call(orderByMethod, basePropertyAccess, selectorLambdaExpression);
 		}
 
 		private Expression JoinExpressions(Expression left, LinqExpressionJoinCondition joinCondition, Expression right)
@@ -147,21 +213,6 @@ namespace DotnetToolset.Services
 				default:
 					return Expression.AndAlso(left, right);
 			}
-		}
-
-		/// <inheritdoc />
-		public Expression ProcessListExpression(string basePropertyName, ParameterExpression parameter, LambdaExpression lambda)
-		{
-			// Parse property name
-			Expression member = GetMemberExpression(parameter, basePropertyName);
-
-			// Get a reference to Enumerable.Any() method
-			MethodInfo anyMethodInfo = typeof(Enumerable).GetMethods().First(m => m.Name == "Any" && m.GetParameters().Length == 2);
-
-			// Create new method and return a call to it
-			Type type = parameter.Type.GetProperty(basePropertyName)?.PropertyType.GetGenericArguments()[0];
-			anyMethodInfo = anyMethodInfo.MakeGenericMethod(type);
-			return Expression.Call(anyMethodInfo, member, lambda);
 		}
 	}
 }

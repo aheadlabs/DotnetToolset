@@ -85,4 +85,15 @@
 		/// </summary>
 		Descending
 	}
+
+	/// <summary>
+	/// Select operators used in lambda expressions
+	/// </summary>
+	public enum LinqExpressionSelectOperator
+	{
+		/// <summary>
+		/// IEnumerable.Select()
+		/// </summary>
+		IntSelect
+	}
 }

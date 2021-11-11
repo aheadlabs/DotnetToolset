@@ -103,7 +103,7 @@ namespace DotnetToolset.Services
 		}
 		
 		/// <inheritdoc />
-		public Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator)
+		public Expression GenerateFilterExpression<T>(Expression left, LinqExpressionListOperator expressionListOperator)
 		{
 			MethodInfo methodInfo;
 
@@ -116,7 +116,7 @@ namespace DotnetToolset.Services
 					return null;
 			}
 
-			methodInfo = methodInfo.MakeGenericMethod(leftGenericType);
+			methodInfo = methodInfo.MakeGenericMethod(typeof(T));
 			return Expression.Call(methodInfo, left);
 		}
 
@@ -186,8 +186,7 @@ namespace DotnetToolset.Services
 		}
 
 		/// <inheritdoc />
-		public Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
-			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
+		public Expression GenerateOrderingExpression<TSource, TKey>(LinqExpressionOrderingOperator expressionOrderingOperator, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
 		{
 			string methodName = expressionOrderingOperator is LinqExpressionOrderingOperator.Ascending ? "OrderBy": "OrderByDescending";
 
@@ -195,9 +194,21 @@ namespace DotnetToolset.Services
 			MethodInfo orderByMethod = typeof(Enumerable)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
 				.First(method => method.Name == methodName && method.GetParameters().Length == 2);
-			orderByMethod = orderByMethod.MakeGenericMethod(enumerableGenericType, selectorPropertyAccessType);
+			orderByMethod = orderByMethod.MakeGenericMethod(typeof(TSource), typeof(TKey));
 
 			return Expression.Call(orderByMethod, basePropertyAccess, selectorLambdaExpression);
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateSelectExpression<TSource, TResult>(MemberExpression basePropertyAccess, LambdaExpression projectionLambdaExpression)
+		{
+			// Create OrderBy() or OrderByDescending() methods
+			MethodInfo selectMethod = typeof(Enumerable)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.First(method => method.Name == "Select" && method.GetParameters().Length == 2);
+			selectMethod = selectMethod!.MakeGenericMethod(typeof(TSource), typeof(TResult));
+
+			return Expression.Call(selectMethod, basePropertyAccess, projectionLambdaExpression);
 		}
 
 		private Expression JoinExpressions(Expression left, LinqExpressionJoinCondition joinCondition, Expression right)

@@ -83,13 +83,11 @@ namespace DotnetToolset.Services
 			Type type = parameter.Type.GetProperty(navigationPropertyName)?.PropertyType.GetGenericArguments()[0];
 			anyMethodInfo = anyMethodInfo.MakeGenericMethod(type);
 
-			switch (expressionListOperator)
+			return expressionListOperator switch
 			{
-				case LinqExpressionListOperator.AnyLambda:
-					return Expression.Call(anyMethodInfo, member, lambda);
-			}
-
-			return null;
+				LinqExpressionListOperator.AnyLambda => Expression.Call(anyMethodInfo, member, lambda),
+				_ => null
+			};
 		}
 
 		/// <inheritdoc />
@@ -101,23 +99,38 @@ namespace DotnetToolset.Services
 			
 			return GenerateComparisonExpression(propertyExpression, expressionComparisonOperator, valueExpression);
 		}
+
+		/// <inheritdoc />
+		public List<ConstantExpression> GenerateConstantExpressionListFromArray<T>(object[] values) => values.Select(v => Expression.Constant((T)v)).ToList();
 		
 		/// <inheritdoc />
-		public Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator)
+		public Expression GenerateFilterExpression(Expression left, LinqExpressionListOperator expressionListOperator, Type[] types = null, object[] values = null)
 		{
 			MethodInfo methodInfo;
 
 			switch (expressionListOperator)
 			{
+				case LinqExpressionListOperator.Any:
+					methodInfo = typeof(Enumerable)
+						.GetMethods(BindingFlags.Public | BindingFlags.Static)
+						.First(method => method.Name == "Any" && method.GetParameters().Length == 1);
+					methodInfo = methodInfo.MakeGenericMethod(types![0]);
+					return Expression.Call(methodInfo, left);
 				case LinqExpressionListOperator.First:
-					methodInfo = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(method => method.Name == "First" && method.GetParameters().Length == 1);
-					break;
-				default:
-					return null;
+					methodInfo = typeof(Enumerable)
+						.GetMethods(BindingFlags.Public | BindingFlags.Static)
+						.First(method => method.Name == "First" && method.GetParameters().Length == 1);
+					return Expression.Call(methodInfo, left);
+				case LinqExpressionListOperator.Intersect:
+					methodInfo = typeof(Enumerable)
+						.GetMethods(BindingFlags.Public | BindingFlags.Static)
+						.First(method => method.Name == "Intersect" && method.GetParameters().Length == 2);
+					methodInfo = methodInfo.MakeGenericMethod(types![0]);
+					NewArrayExpression items = Expression.NewArrayInit(typeof(int), GenerateConstantExpressionListFromArray<int>(values));
+					return Expression.Call(methodInfo, left, items);
 			}
 
-			methodInfo = methodInfo.MakeGenericMethod(leftGenericType);
-			return Expression.Call(methodInfo, left);
+			return null;
 		}
 
 		/// <inheritdoc />
@@ -186,8 +199,7 @@ namespace DotnetToolset.Services
 		}
 
 		/// <inheritdoc />
-		public Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
-			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
+		public Expression GenerateOrderingExpression<TSource, TKey>(LinqExpressionOrderingOperator expressionOrderingOperator, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression)
 		{
 			string methodName = expressionOrderingOperator is LinqExpressionOrderingOperator.Ascending ? "OrderBy": "OrderByDescending";
 
@@ -195,9 +207,21 @@ namespace DotnetToolset.Services
 			MethodInfo orderByMethod = typeof(Enumerable)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
 				.First(method => method.Name == methodName && method.GetParameters().Length == 2);
-			orderByMethod = orderByMethod.MakeGenericMethod(enumerableGenericType, selectorPropertyAccessType);
+			orderByMethod = orderByMethod.MakeGenericMethod(typeof(TSource), typeof(TKey));
 
 			return Expression.Call(orderByMethod, basePropertyAccess, selectorLambdaExpression);
+		}
+
+		/// <inheritdoc />
+		public Expression GenerateSelectExpression<TSource, TResult>(MemberExpression basePropertyAccess, LambdaExpression projectionLambdaExpression)
+		{
+			// Create OrderBy() or OrderByDescending() methods
+			MethodInfo selectMethod = typeof(Enumerable)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.First(method => method.Name == "Select" && method.GetParameters()[1].ToString().Contains("[TSource,TResult]"));
+			selectMethod = selectMethod!.MakeGenericMethod(typeof(TSource), typeof(TResult));
+
+			return Expression.Call(selectMethod, basePropertyAccess, projectionLambdaExpression);
 		}
 
 		private Expression JoinExpressions(Expression left, LinqExpressionJoinCondition joinCondition, Expression right)

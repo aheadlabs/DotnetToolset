@@ -44,6 +44,11 @@
 	public enum LinqExpressionListOperator
 	{
 		/// <summary>
+		/// IEnumerable.Any()
+		/// </summary>
+		Any,
+
+		/// <summary>
 		/// IEnumerable.Any(lambda-expression)
 		/// </summary>
 		AnyLambda,
@@ -51,7 +56,12 @@
 		/// <summary>
 		/// IEnumerable.First()
 		/// </summary>
-		First
+		First,
+
+		/// <summary>
+		/// IEnumerable.Intersect(IEnumerable, IEnumerable) => no comparer used
+		/// </summary>
+		Intersect
 	}
 
 	/// <summary>
@@ -84,5 +94,16 @@
 		/// IEnumerable.OrderByDescending()
 		/// </summary>
 		Descending
+	}
+
+	/// <summary>
+	/// Select operators used in lambda expressions
+	/// </summary>
+	public enum LinqExpressionSelectOperator
+	{
+		/// <summary>
+		/// IEnumerable.Select()
+		/// </summary>
+		IntSelect
 	}
 }

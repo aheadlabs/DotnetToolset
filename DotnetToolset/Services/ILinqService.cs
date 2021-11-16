@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace DotnetToolset.Services
 {
@@ -26,15 +27,6 @@ namespace DotnetToolset.Services
 		/// <param name="right">Second expression</param>
 		/// <returns></returns>
 		Expression GenerateComparisonExpression(Expression left, LinqExpressionComparisonOperator expressionComparisonOperator, Expression right);
-
-		/// <summary>
-		/// Generates a filter expression that affects an IEnumerable, like users.First()
-		/// </summary>
-		/// <param name="left">IEnumerable expression, like users</param>
-		/// <param name="leftGenericType">Type for the generic contained in the IEnumerable. T in IEnumerable of T.</param>
-		/// <param name="expressionListOperator">Filter method operator, like .First()</param>
-		/// <returns></returns>
-		Expression GenerateFilterExpression(Expression left, Type leftGenericType, LinqExpressionListOperator expressionListOperator);
 
 		/// <summary>
 		/// Generates a comparison expression based on two existing expressions and a method that connects them, like user.Name.Contains('John')
@@ -74,10 +66,26 @@ namespace DotnetToolset.Services
 		/// <param name="expressionComparisonOperator">Operator used in the comparison</param>
 		/// <param name="value">Value to compare against</param>
 		/// <param name="valueType">Type of the value to compare against</param>
-		/// <param name="isListExpression">If true, the expression will processed as a list expression</param>
-		/// <param name="listParameter">Lambda parameter for the related entity</param>
 		/// <returns>Lambda comparison expression</returns>
 		Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType);
+
+		/// <summary>
+		/// Creates an array expression from an array of values
+		/// </summary>
+		/// <typeparam name="T">Destination type for the array elements when the cast takes place</typeparam>
+		/// <param name="values">Array of values to create the expression from</param>
+		/// <returns></returns>
+		List<ConstantExpression> GenerateConstantExpressionListFromArray<T>(object[] values);
+
+		/// <summary>
+		/// Generates a filter expression that affects an IEnumerable, like users.First()
+		/// </summary>
+		/// <param name="left">IEnumerable expression, like users</param>
+		/// <param name="expressionListOperator">Filter method operator, like .First()</param>
+		/// <param name="types">Array of types to be substituted for the type parameters of the current generic method definition</param>
+		/// <param name="values">Array of values to be substituted for the value parameters of the current generic method definition</param>
+		/// <returns></returns>
+		Expression GenerateFilterExpression(Expression left, LinqExpressionListOperator expressionListOperator, Type[] types = null, object[] values = null);
 
 		/// <summary>
 		/// Generates a Lambda expression joining several existing expressions
@@ -109,12 +117,21 @@ namespace DotnetToolset.Services
 		/// Generates an ordering expression, like users.OrderByDescending(u => u.LastLoginDate) where users is IEnumerable of T
 		/// </summary>
 		/// <param name="expressionOrderingOperator">Ascending (OrderBy) or descending (OrderByDescending)</param>
-		/// <param name="enumerableGenericType">IEnumerable generic type, like T in IEnumerable of T (users)</param>
-		/// <param name="selectorPropertyAccessType">Type for the selector expression, like DateTime in u.LastLoginDate</param>
+		/// <typeparam name="TSource">IEnumerable generic type, like T in IEnumerable of T (users)</typeparam>
+		/// <typeparam name="TKey">Type for the selector expression, like DateTime in u.LastLoginDate</typeparam>
 		/// <param name="basePropertyAccess">Selector property expression, like users</param>
 		/// <param name="selectorLambdaExpression">Lambda expression for the ordering selector, like u => u.LastLoginDate</param>
 		/// <returns></returns>
-		Expression GenerateOrderingExpression(LinqExpressionOrderingOperator expressionOrderingOperator,
-			Type enumerableGenericType, Type selectorPropertyAccessType, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression);
+		Expression GenerateOrderingExpression<TSource, TKey>(LinqExpressionOrderingOperator expressionOrderingOperator, MemberExpression basePropertyAccess, LambdaExpression selectorLambdaExpression);
+
+		/// <summary>
+		/// Generates a Select expression, like users.Select(u => u.Id) where users is IEnumerable of T
+		/// </summary>
+		/// <typeparam name="TSource">IEnumerable generic type, like T in IEnumerable of T (users)</typeparam>
+		/// <typeparam name="TResult">Type for the selector expression, like DateTime in u.LastLoginDate</typeparam>
+		/// <param name="basePropertyAccess">Selector property expression, like users</param>
+		/// <param name="projectionLambdaExpression">Lambda expression for the ordering selector, like u => u.LastLoginDate</param>
+		/// <returns></returns>
+		Expression GenerateSelectExpression<TSource, TResult>(MemberExpression basePropertyAccess, LambdaExpression projectionLambdaExpression);
 	}
 }

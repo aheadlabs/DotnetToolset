@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace DotnetToolset.Services
 {
@@ -69,13 +70,22 @@ namespace DotnetToolset.Services
 		Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType);
 
 		/// <summary>
+		/// Creates an array expression from an array of values
+		/// </summary>
+		/// <typeparam name="T">Destination type for the array elements when the cast takes place</typeparam>
+		/// <param name="values">Array of values to create the expression from</param>
+		/// <returns></returns>
+		List<ConstantExpression> GenerateConstantExpressionListFromArray<T>(object[] values);
+
+		/// <summary>
 		/// Generates a filter expression that affects an IEnumerable, like users.First()
 		/// </summary>
 		/// <param name="left">IEnumerable expression, like users</param>
-		/// <typeparam name="TSource">Type for the generic contained in the IEnumerable. T in IEnumerable of T.</typeparam>
 		/// <param name="expressionListOperator">Filter method operator, like .First()</param>
+		/// <param name="types">Array of types to be substituted for the type parameters of the current generic method definition</param>
+		/// <param name="values">Array of values to be substituted for the value parameters of the current generic method definition</param>
 		/// <returns></returns>
-		Expression GenerateFilterExpression<TSource>(Expression left, LinqExpressionListOperator expressionListOperator);
+		Expression GenerateFilterExpression(Expression left, LinqExpressionListOperator expressionListOperator, Type[] types = null, object[] values = null);
 
 		/// <summary>
 		/// Generates a Lambda expression joining several existing expressions

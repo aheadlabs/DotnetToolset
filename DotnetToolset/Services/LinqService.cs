@@ -57,7 +57,7 @@ namespace DotnetToolset.Services
 				case LinqExpressionMethodOperator.IntContains:
 					MethodInfo intContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(int) });
 					return Expression.Call(left, intContainsMethod!, right);
-			}
+            }
 			
 			return null;
 		}
@@ -89,6 +89,23 @@ namespace DotnetToolset.Services
 				_ => null
 			};
 		}
+
+        /// <inheritdoc />
+        public Expression GenerateComparisonExpression<T>(NewArrayExpression leftArrayExpression, LinqExpressionListOperator expressionListOperator, LambdaExpression lambda)
+        {
+
+            // Get a reference to Enumerable.Any() method
+            MethodInfo anyMethodInfo = typeof(Enumerable).GetMethods().First(m => m.Name == "Any" && m.GetParameters().Length == 2);
+
+            // Create new method and return a call to it
+            anyMethodInfo = anyMethodInfo.MakeGenericMethod(typeof(T));
+
+            return expressionListOperator switch
+            {
+                LinqExpressionListOperator.AnyLambda => Expression.Call(anyMethodInfo, leftArrayExpression, lambda),
+                _ => null
+            };
+        }
 
 		/// <inheritdoc />
 		public Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType)

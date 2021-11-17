@@ -69,6 +69,16 @@ namespace DotnetToolset.Services
 		/// <returns>Lambda comparison expression</returns>
 		Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionComparisonOperator expressionComparisonOperator, object value, Type valueType);
 
+        /// <summary>
+        /// Generates a Lambda comparison expression from an array and any lambda
+        /// </summary>
+        /// <param name="leftArrayExpression">Expression array from which we want to do the any operation</param>
+        /// <param name="expressionListOperator">List operator used in the comparison</param>
+        /// <param name="lambda">LAmbda to embed into the list operator</param>
+        /// <returns>Lambda comparison expression</returns>
+        Expression GenerateComparisonExpression<T>(NewArrayExpression leftArrayExpression,
+            LinqExpressionListOperator expressionListOperator, LambdaExpression lambda);
+
 		/// <summary>
 		/// Creates an array expression from an array of values
 		/// </summary>

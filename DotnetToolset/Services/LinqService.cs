@@ -137,6 +137,7 @@ namespace DotnetToolset.Services
 					methodInfo = typeof(Enumerable)
 						.GetMethods(BindingFlags.Public | BindingFlags.Static)
 						.First(method => method.Name == "First" && method.GetParameters().Length == 1);
+					methodInfo = methodInfo.MakeGenericMethod(types![0]);
 					return Expression.Call(methodInfo, left);
 				case LinqExpressionListOperator.Intersect:
 					methodInfo = typeof(Enumerable)

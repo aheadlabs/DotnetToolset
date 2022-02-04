@@ -58,6 +58,11 @@
 		/// </summary>
 		First,
 
+        /// <summary>
+        /// IEnumerable.First(lambda-expression)
+        /// </summary>
+        FirstLambda,
+
 		/// <summary>
 		/// IEnumerable.Intersect(IEnumerable, IEnumerable) => no comparer used
 		/// </summary>

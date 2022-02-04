@@ -49,7 +49,7 @@ namespace DotnetToolset.Services
 		Expression GenerateComparisonExpression(ParameterExpression parameter, string property, LinqExpressionMethodOperator expressionMethodOperator, object value, Type valueType);
 
 		/// <summary>
-		/// Generates a comparison expression between a IEnumerable and an Any(lambda-expression) method that contains a lambda expression, like users.Any(u => u.Name = 'John').
+		/// Generates a comparison expression between a IEnumerable and an [Method](lambda-expression) method that contains a lambda expression, like users.Any(u => u.Name = 'John').
 		/// </summary>
 		/// <param name="navigationPropertyName">Property name of the base entity that contains the navigation property</param>
 		/// <param name="expressionListOperator"></param>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>DotnetToolset</RootNamespace>
-    <Version>0.15.3</Version>
+    <Version>0.15.4</Version>
     <Company>Ahead Labs, S.L.</Company>
     <Authors>Ahead Labs, S.L.</Authors>
     <Description>Opinionated repository that contains common .NET tools and patterns to simplify things and reuse code.</Description>

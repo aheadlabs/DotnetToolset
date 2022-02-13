@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using System;
+using CsvHelper;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Globalization;
@@ -56,8 +57,9 @@ namespace DotnetToolset.Parsers
 		/// <param name="entityName"></param>
 		/// <returns></returns>
 		private string GetCsvPath(string entityName)
-		{
-			string environmentPath = Path.Combine(GetAssemblyPath(), "Data", GetDataSetName(), $"{entityName}.csv");
+        {
+            string environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? GetDataSetName();
+			string environmentPath = Path.Combine(GetAssemblyPath(), "Data", environmentName, $"{entityName}.csv");
 			string globalPath = Path.Combine(GetAssemblyPath(), "Data", "Global", $"{entityName}.csv");
 
 			if (File.Exists(environmentPath))

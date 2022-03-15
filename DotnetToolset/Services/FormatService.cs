@@ -75,7 +75,7 @@ namespace DotnetToolset.Services
         }
 
         /// <inheritdoc />
-        public string NormalizeString(string phrase)
+        public string NormalizeString(string phrase, int maxLength = 100)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace DotnetToolset.Services
                 str = Regex.Replace(str, @"\s+", " ").Trim();
 
                 // Cut and trim 
-                str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();
+                str = str.Substring(0, str.Length <= maxLength ? str.Length : maxLength).Trim();
                 str = Regex.Replace(str, @"\s", "-"); // Hyphens   
 
                 return str;

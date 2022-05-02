@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>DotnetToolset</RootNamespace>
-    <Version>0.15.6</Version>
+    <Version>0.16.0</Version>
     <Company>Ahead Labs, S.L.</Company>
     <Authors>Ahead Labs, S.L.</Authors>
     <Description>Opinionated repository that contains common .NET tools and patterns to simplify things and reuse code.</Description>
@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RestSharp" Version="106.15.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
   </ItemGroup>
 
   <ItemGroup>

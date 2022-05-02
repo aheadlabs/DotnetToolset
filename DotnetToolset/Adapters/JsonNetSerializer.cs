@@ -4,7 +4,7 @@ using RestSharp.Serialization.Json;
 
 namespace DotnetToolset.Adapters
 {
-	public class JsonNetSerializer: IRestSerializer
+    public class JsonNetSerializer : IRestSerializer
     {
         private JsonSerializer JsonSerializer { get; }
 
@@ -25,3 +25,5 @@ namespace DotnetToolset.Adapters
         public T Deserialize<T>(IRestResponse response) => JsonSerializer.Deserialize<T>(response);
     }
 }
+
+// TODO Pending migration to RestSharp v107 due to breaking changes described here: https://restsharp.dev/v107/

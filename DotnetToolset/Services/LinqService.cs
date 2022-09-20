@@ -12,10 +12,12 @@ namespace DotnetToolset.Services
     public class LinqService : ILinqService
     {
         private readonly ILogger<LinqService> _logger;
+        private readonly IFormatService _formatService;
 
-        public LinqService(ILogger<LinqService> logger)
+        public LinqService(ILogger<LinqService> logger, IFormatService formatService)
         {
             _logger = logger;
+            _formatService = formatService;
         }
 
         /// <inheritdoc />
@@ -51,9 +53,17 @@ namespace DotnetToolset.Services
         {
             switch (expressionMethodOperator)
             {
+                case LinqExpressionMethodOperator.NormalizedStringContains:
+                    MethodInfo normalizedStringContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                    // NOTE: Here we can intercept the right side of the expression and manipulate it.
+                    Expression normalizedRight =
+                        Expression.Constant(_formatService.RemoveAccent(right.ToString()), typeof(string));
+                    return Expression.Call(left, normalizedStringContainsMethod!, normalizedRight);
+
                 case LinqExpressionMethodOperator.StringContains:
                     MethodInfo stringContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                     return Expression.Call(left, stringContainsMethod!, right);
+
                 case LinqExpressionMethodOperator.IntContains:
                     MethodInfo intContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(int) });
                     return Expression.Call(left, intContainsMethod!, right);

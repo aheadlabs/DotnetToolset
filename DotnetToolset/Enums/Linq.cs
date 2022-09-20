@@ -79,6 +79,11 @@
 		/// </summary>
 		IntContains,
 
+        /// <summary>
+        /// string.Contains() with right side normalized
+        /// </summary>
+        NormalizedStringContains,
+
 		/// <summary>
 		/// string.Contains()
 		/// </summary>

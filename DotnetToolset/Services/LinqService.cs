@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Res = DotnetToolset.Resources.Literals;
 
 namespace DotnetToolset.Services

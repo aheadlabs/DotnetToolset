@@ -57,7 +57,7 @@ namespace DotnetToolset.Services
                     MethodInfo normalizedStringContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                     // NOTE: Here we can intercept the right side of the expression and manipulate it.
                     Expression normalizedRight =
-                        Expression.Constant(_formatService.RemoveAccent(right.ToString()), typeof(string));
+                        Expression.Constant(_formatService.RemoveAccent(right.ToString().Replace("\"", "")), typeof(string));
                     return Expression.Call(left, normalizedStringContainsMethod!, normalizedRight);
 
                 case LinqExpressionMethodOperator.StringContains:
